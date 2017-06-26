@@ -33,7 +33,7 @@ void readlineofints(int count, int *array) {
 
 //Brute force it, because it's at most 8 cities so it's doable
 void test_paths(int city_count, int visited_count, int current_city, long long total_distance, int **distances, int cities_visited_order[8],
-    long long &min_distance, int (&final_cities_visited_list)[]) {
+    bool cities_visited[8], long long &min_distance, int (&final_cities_visited_list)[8]) {
     if (visited_count == city_count) { //If we've visited everywhere
         if (total_distance < min_distance) { //If the distance of this route is shorter than the total
             min_distance = total_distance; //Set the min to this current total
@@ -45,27 +45,24 @@ void test_paths(int city_count, int visited_count, int current_city, long long t
     }
 
     //Iterate through the cities
-    for (int i = 0; i < city_count; i++) {
-        if()
-        int next_city = -1; //Initialize next city
-    }
-    
-    while (total_cities_visited < n) { //While we haven't visited all cities
-        
-        for (int k = 0; k < n; k++) {
-            //If we haven't visited the next city, and the distance there is shorter than the current shortest
-            if (k != current_city && !cities_visited[k] && distances[current_city][k] < shortest_next_dist) {
-                shortest_next_dist = distances[current_city][k]; //Set shortest distance to this city
-                next_city = k; //Mark this city as the next one
+    for (int i = 1; i < city_count; i++) { //Start from 1 because we begin in city 0
+        if (!cities_visited[i] && i != current_city) { //If this city is a new one
+            //Set up variables to pass in to recursion based on this city
+            int next_city = i; //Initialize next city    
+            int new_visited_count = visited_count + 1;
+            long long new_total_distance = total_distance + distances[current_city][i];
+            int new_cities_visited_order[8];
+            bool new_cities_visited[8];
+            for (int j = 0; j < city_count; j++) { //Copy already visited cities into array
+                new_cities_visited_order[j] = cities_visited_order[j];
+                new_cities_visited[j] = cities_visited[j]; //Copy cities visited into bool array
             }
+            new_cities_visited_order[visited_count] = next_city;
+            new_cities_visited[next_city] = true; //Mark next city visited
+            test_paths(city_count, new_visited_count, next_city, new_total_distance, distances, new_cities_visited_order, new_cities_visited, min_distance, final_cities_visited_list);
         }
-        //After finding shortest distance, go to that city and mark it visited
-        current_city = next_city; //Go to next city
-        cities_visited[next_city] = true; //Mark it visited
-        cities_visited_list.push_back(next_city); //Log it as the next city
-        total_cities_visited++; //Increment cities visited
     }
-
+    return;
 }
 
 
@@ -99,10 +96,11 @@ int main() {
         cities_visited_order[0] = 0; //Set first city to 0
         cities_visited[0] = true; //Note that we've been to the starting city
         long long min_distance = 9223372036854775807; //Initialize min distance to max long long value
-        int cities_visited_list[8]; //Initialize list of cities visited
+        int final_cities_visited_list[8]; //Initialize list of cities visited
         final_cities_visited_list[0]=0; //Start the list with the starting city
-        long long total_distance;
-        test_paths(n,total_cities_visited,current_city,total_distance, distances, cities_visited, min_distance, final_cities_visited_list); //Check the cities visited
+        long long total_distance = 0;
+        //Recurse
+        test_paths(n,total_cities_visited,current_city,total_distance, distances, cities_visited_order,cities_visited, min_distance, final_cities_visited_list); //Check the cities visited
 
         //Delete the heap arrays
         for (int i = 0; i < n; ++i) {
@@ -112,8 +110,8 @@ int main() {
 
         //Print output
         std::cout << "Case #" << i << ": ";
-        for(auto city : cities_visited_list){
-            std::cout << city+1 << " "; //Increment to offset for indexing
+        for (int i = 0; i < n;i++) {
+            std::cout << final_cities_visited_list[i]+1 << " "; //Increment to offset for indexing
         }        
         std::cout << std::endl;
     }
