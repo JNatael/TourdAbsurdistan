@@ -35,6 +35,7 @@ void readlineofints(int count, int *array) {
 void test_paths(int city_count, int visited_count, int current_city, long long total_distance, int **distances, int cities_visited_order[8],
     bool cities_visited[8], long long &min_distance, int (&final_cities_visited_list)[8]) {
     if (visited_count == city_count) { //If we've visited everywhere
+        total_distance += distances[current_city][0]; //Add distance back to 0 to this route
         if (total_distance < min_distance) { //If the distance of this route is shorter than the total
             min_distance = total_distance; //Set the min to this current total
                 for (int i = 1; i < city_count; i++) { //Skip 0 as it's always the same
