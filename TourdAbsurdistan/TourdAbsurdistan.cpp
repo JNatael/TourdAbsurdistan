@@ -31,10 +31,22 @@ void readlineofints(int count, int *array) {
     }
 }
 
+//Brute force it, because it's at most 8 cities so it's doable
+void test_paths(int city_count, int visited_count, int current_city, long long total_distance, int **distances, int cities_visited_order[8],
+    long long &min_distance, int (&final_cities_visited_list)[]) {
+    if (visited_count == city_count) { //If we've visited everywhere
+        if (total_distance < min_distance) { //If the distance of this route is shorter than the total
+            min_distance = total_distance; //Set the min to this current total
+                for (int i = 1; i < city_count; i++) { //Skip 0 as it's always the same
+                    final_cities_visited_list[i] = cities_visited_order[i]; //Rewrite the order of visiting to this list
+                }
+                return;
+        }
+    }
 
-void test_paths(int city_count,int visited_count,int **distances, bool cities_visited[8],long long &min_distance, int &cities_visited_list) {   
+    //Iterate through the cities
     for (int i = 0; i < city_count; i++) {
-        int shortest_next_dist = 10000; //Initialized to effective infinity (based on problem inputs)
+        if()
         int next_city = -1; //Initialize next city
     }
     
@@ -73,6 +85,7 @@ int main() {
 
         int** distances = new int*[n]; //Initialize array columns
         bool cities_visited[8];
+        int cities_visited_order[8];
 
         // Iterate over inputs
         for (int j = 0; j < n; j++) {
@@ -83,11 +96,13 @@ int main() {
 
         int current_city = 0; //Initialize starting city
         int total_cities_visited = 1; //Initialize visited count at 1 (starting city)
+        cities_visited_order[0] = 0; //Set first city to 0
         cities_visited[0] = true; //Note that we've been to the starting city
         long long min_distance = 9223372036854775807; //Initialize min distance to max long long value
         int cities_visited_list[8]; //Initialize list of cities visited
-        cities_visited_list[0]=0; //Start the list with the starting city
-        test_paths(n,total_cities_visited, distances, cities_visited, min_distance, cities_visited_list); //Check the cities visited
+        final_cities_visited_list[0]=0; //Start the list with the starting city
+        long long total_distance;
+        test_paths(n,total_cities_visited,current_city,total_distance, distances, cities_visited, min_distance, final_cities_visited_list); //Check the cities visited
 
         //Delete the heap arrays
         for (int i = 0; i < n; ++i) {
